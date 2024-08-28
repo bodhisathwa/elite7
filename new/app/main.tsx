@@ -5,11 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 
+
 // Assume we have a user object from our database
 interface User {
   id: string;
   name: string;
-  profilePicture: string;
+  profilePicture: any;
 }
 
 export default function MainScreen() {
@@ -34,7 +35,7 @@ export default function MainScreen() {
     const userData: User = {
       id: '1',
       name: 'John Doe',
-      profilePicture: 'https://example.com/profile-pic.jpg'
+      profilePicture: require('../assets/images/bdp.jpg')
     };
     setUser(userData);
   };
@@ -123,8 +124,8 @@ export default function MainScreen() {
           <Card style={styles.profileCard}>
             <Card.Content style={styles.profileCardContent}>
               <Avatar.Image 
-                size={100} 
-                source={{ uri: user.profilePicture }}
+                size={200} 
+                source={ user.profilePicture }
                 style={styles.avatar}
               />
               <Text style={[styles.employeeName, { color: themeColors.text }]}>{user.name}</Text>
@@ -132,7 +133,7 @@ export default function MainScreen() {
           </Card>
         )}
         
-        <Card style={[styles.card, { backgroundColor: currentStatus === 'Checked In' ? '#e6ffe6' : '#ffe6e6' }]}>
+        <Card style={[styles.card, { backgroundColor: currentStatus === 'Checked In' ? '#e6ffe6' : 'red' }]}>
           <Card.Content>
             <Text style={styles.cardTitle}>Current Status: {currentStatus}</Text>
             <Text style={styles.cardContent}>Current Location: {currentLocation}</Text>
@@ -222,6 +223,7 @@ const styles = StyleSheet.create({
   profileCardContent: {
     alignItems: 'center',
     padding: 20,
+    backgroundColor:'#f2f2f2'
   },
   employeeName: {
     fontSize: 24,
@@ -259,6 +261,7 @@ const styles = StyleSheet.create({
   countCard: {
     flex: 1,
     padding: 10,
+    backgroundColor:'#f2f2f2'
   },
   endDutyButton: {
     marginTop: 20,
@@ -276,5 +279,6 @@ const styles = StyleSheet.create({
   },
   avatar: {
     marginBottom: 10,
+    
   },
 });
