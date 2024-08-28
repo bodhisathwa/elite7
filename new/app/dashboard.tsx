@@ -62,7 +62,7 @@ export default function DashboardScreen() {
           resizeMode="contain"
         />
         <Text style={styles.welcomeText}>Welcome, {userData.name}!</Text>
-        <Avatar.Image size={100} source={{ uri: userData.photo }} style={styles.avatar} />
+        <Avatar.Image size={300} source={{ uri: userData.photo }} style={styles.avatar} />
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.dateText}>

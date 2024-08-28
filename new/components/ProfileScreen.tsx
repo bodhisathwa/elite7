@@ -15,7 +15,7 @@ export default function ProfileScreen({ toggleTheme, isDarkTheme }: ProfileScree
   // Mock user data - replace with actual user data in your implementation
   const user = {
     name: 'John Doe',
-    photo: 'https://example.com/profile-pic.jpg',
+    photo: require('../assets/images/bdp.jpg'),
     email: 'john.doe@example.com',
     phone: '+1 (555) 123-4567',
     employeeId: 'EMP001',
@@ -49,7 +49,7 @@ export default function ProfileScreen({ toggleTheme, isDarkTheme }: ProfileScree
         <View style={styles.profileHeader}>
           <Avatar.Image
             size={120}
-            source={{ uri: user.photo }}
+            source={ user.photo }
             style={styles.profilePhoto}
           />
           <Text style={[styles.nameText, { color: theme.colors.primary }]}>{user.name}</Text>
