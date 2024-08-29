@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, IconButton, useTheme, DataTable } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { Text, Card, useTheme, DataTable } from 'react-native-paper';
 import { Calendar, DateData } from 'react-native-calendars';
+import { theme } from '../app/theme';
 
 interface AttendanceRecord {
   location: string;
@@ -11,14 +10,7 @@ interface AttendanceRecord {
   checkOut: string;
 }
 
-interface AttendanceHistoryProps {
-  toggleTheme: () => void;
-  isDarkTheme: boolean;
-}
-
-export default function AttendanceHistory({ toggleTheme, isDarkTheme }: AttendanceHistoryProps) {
-  const theme = useTheme();
-  const router = useRouter();
+export default function AttendanceHistory() {
   const [selectedDate, setSelectedDate] = useState('');
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
 
@@ -26,13 +18,10 @@ export default function AttendanceHistory({ toggleTheme, isDarkTheme }: Attendan
 
   const handleDateSelect = (day: DateData) => {
     setSelectedDate(day.dateString);
-    // Fetch attendance records for the selected date
     fetchAttendanceRecords(day.dateString);
   };
 
   const fetchAttendanceRecords = (date: string) => {
-    // This is where you would typically make an API call to fetch the records
-    // For this example, we'll use mock data
     const mockRecords: AttendanceRecord[] = [
       { location: 'Main Office', checkIn: '09:00 AM', checkOut: '05:30 PM' },
       { location: 'Client Site', checkIn: '02:00 PM', checkOut: '04:00 PM' },
@@ -41,21 +30,11 @@ export default function AttendanceHistory({ toggleTheme, isDarkTheme }: Attendan
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.header}>
-        <Text style={[styles.dateText, { color: theme.colors.text }]}>{currentDate}</Text>
-        <IconButton
-          icon={isDarkTheme ? 'weather-sunny' : 'weather-night'}
-          color={theme.colors.primary}
-          size={24}
-          onPress={toggleTheme}
-        />
-      </View>
-
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={[styles.title, { color: theme.colors.primary }]}>Attendance History</Text>
 
-        <Card style={styles.calendarCard}>
+        <Card style={[styles.calendarCard, { backgroundColor: theme.colors.surface }]}>
           <Calendar
             onDayPress={handleDateSelect}
             markedDates={{
@@ -71,28 +50,31 @@ export default function AttendanceHistory({ toggleTheme, isDarkTheme }: Attendan
               dayTextColor: theme.colors.text,
               textDisabledColor: theme.colors.disabled,
               arrowColor: theme.colors.primary,
+              monthTextColor: theme.colors.primary,
+              textMonthFontWeight: 'bold',
+              textDayHeaderFontWeight: '600',
             }}
           />
         </Card>
 
         {selectedDate && (
-          <Card style={styles.recordsCard}>
+          <Card style={[styles.recordsCard, { backgroundColor: theme.colors.surface }]}>
             <Card.Content>
-              <Text style={[styles.selectedDateText, { color: theme.colors.primary }]}>
+              <Text style={[styles.selectedDateText, { color: theme.colors.secondary }]}>
                 Records for {selectedDate}
               </Text>
               <DataTable>
-                <DataTable.Header>
-                  <DataTable.Title>Location</DataTable.Title>
-                  <DataTable.Title>Check-In</DataTable.Title>
-                  <DataTable.Title>Check-Out</DataTable.Title>
+                <DataTable.Header style={styles.tableHeader}>
+                  <DataTable.Title textStyle={styles.tableHeaderText}>Location</DataTable.Title>
+                  <DataTable.Title textStyle={styles.tableHeaderText}>Check-In</DataTable.Title>
+                  <DataTable.Title textStyle={styles.tableHeaderText}>Check-Out</DataTable.Title>
                 </DataTable.Header>
 
                 {attendanceRecords.map((record, index) => (
-                  <DataTable.Row key={index}>
-                    <DataTable.Cell>{record.location}</DataTable.Cell>
-                    <DataTable.Cell>{record.checkIn}</DataTable.Cell>
-                    <DataTable.Cell>{record.checkOut}</DataTable.Cell>
+                  <DataTable.Row key={index} style={styles.tableRow}>
+                    <DataTable.Cell textStyle={styles.tableCell}>{record.location}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tableCell}>{record.checkIn}</DataTable.Cell>
+                    <DataTable.Cell textStyle={styles.tableCell}>{record.checkOut}</DataTable.Cell>
                   </DataTable.Row>
                 ))}
               </DataTable>
@@ -100,7 +82,7 @@ export default function AttendanceHistory({ toggleTheme, isDarkTheme }: Attendan
           </Card>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -108,35 +90,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
-  dateText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
   scrollContent: {
     flexGrow: 1,
-    padding: 20,
+    padding: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 16,
+    textAlign: 'center',
   },
   calendarCard: {
-    marginBottom: 20,
+    marginBottom: 16,
+    borderRadius: theme.roundness,
+    overflow: 'hidden',
   },
   recordsCard: {
-    marginTop: 20,
+    marginTop: 16,
+    borderRadius: theme.roundness,
   },
   selectedDateText: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  tableHeader: {
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  tableHeaderText: {
+    fontWeight: 'bold',
+    color: theme.colors.text,
+  },
+  tableRow: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  tableCell: {
+    color: theme.colors.text,
   },
 });

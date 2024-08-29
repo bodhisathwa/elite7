@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, View } from 'react-native';
 import { Text, Card, IconButton, useTheme, ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { theme } from '../app/theme';
+
+
 
 interface Notification {
   id: string;
@@ -12,36 +13,19 @@ interface Notification {
   timestamp: Date;
 }
 
-interface NotificationsScreenProps {
-  toggleTheme: () => void;
-  isDarkTheme: boolean;
-}
-
-export default function NotificationsScreen({ toggleTheme, isDarkTheme }: NotificationsScreenProps) {
+export default function NotificationsScreen() {
   const theme = useTheme();
-  const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const currentDate = new Date();
-  const dateString = currentDate.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-
   useEffect(() => {
-    // Simulating fetching notifications from an API
     const fetchNotifications = async () => {
       try {
-        // Replace this with actual API call
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating network delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
         const mockNotifications: Notification[] = [
           { id: '1', type: 'check-in', content: 'You checked in at 9:00 AM', timestamp: new Date(2024, 7, 16, 9, 0) },
           { id: '2', type: 'check-out', content: 'You checked out at 5:30 PM', timestamp: new Date(2024, 7, 16, 17, 30) },
           { id: '3', type: 'message', content: 'Remember to submit your weekly report', timestamp: new Date(2024, 7, 16, 14, 0) },
-          // Add more mock notifications as needed
         ];
         setNotifications(mockNotifications);
         setLoading(false);
@@ -63,12 +47,12 @@ export default function NotificationsScreen({ toggleTheme, isDarkTheme }: Notifi
             size={24}
             color={theme.colors.primary}
           />
-          <Text style={[styles.notificationType, { color: theme.colors.primary }]}>
+          <Text style={styles.notificationType}>
             {item.type === 'check-in' ? 'Check-In' : item.type === 'check-out' ? 'Check-Out' : 'Message'}
           </Text>
         </View>
-        <Text style={[styles.notificationContent, { color: theme.colors.text }]}>{item.content}</Text>
-        <Text style={[styles.notificationTimestamp, { color: theme.colors.text }]}>
+        <Text style={styles.notificationContent}>{item.content}</Text>
+        <Text style={styles.notificationTimestamp}>
           {item.timestamp.toLocaleString()}
         </Text>
       </Card.Content>
@@ -76,21 +60,7 @@ export default function NotificationsScreen({ toggleTheme, isDarkTheme }: Notifi
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <StatusBar style={isDarkTheme ? 'light' : 'dark'} />
-      
-      <View style={styles.header}>
-        <Text style={[styles.dateText, { color: theme.colors.text }]}>{dateString}</Text>
-        <IconButton
-          icon={isDarkTheme ? 'weather-sunny' : 'weather-night'}
-          color={theme.colors.primary}
-          size={24}
-          onPress={toggleTheme}
-        />
-      </View>
-
-      <Text style={[styles.title, { color: theme.colors.primary }]}>Notifications</Text>
-
+    <SafeAreaView style={styles.container}>
       {loading ? (
         <ActivityIndicator style={styles.loader} size="large" color={theme.colors.primary} />
       ) : (
@@ -108,23 +78,7 @@ export default function NotificationsScreen({ toggleTheme, isDarkTheme }: Notifi
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
-  dateText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 20,
-    paddingHorizontal: 20,
+    backgroundColor: theme.colors.background,
   },
   loader: {
     flex: 1,
@@ -133,6 +87,7 @@ const styles = StyleSheet.create({
   },
   notificationList: {
     paddingHorizontal: 20,
+    paddingTop: 20,
   },
   notificationCard: {
     marginBottom: 15,
@@ -145,13 +100,16 @@ const styles = StyleSheet.create({
   notificationType: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: theme.colors.primary,
   },
   notificationContent: {
     fontSize: 16,
     marginBottom: 5,
+    color: theme.colors.text,
   },
   notificationTimestamp: {
     fontSize: 14,
     opacity: 0.7,
+    color: theme.colors.text,
   },
 });

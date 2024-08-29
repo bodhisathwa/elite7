@@ -1,27 +1,16 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { Text, Switch, Button, useTheme, IconButton } from 'react-native-paper';
+import { Text, Switch, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { theme } from '../app/theme';
 
 interface SettingsScreenProps {
-  toggleTheme: () => void;
-  isDarkTheme: boolean;
+  theme: typeof theme;
 }
-
-export default function SettingsScreen({ toggleTheme, isDarkTheme }: SettingsScreenProps) {
-  const theme = useTheme();
+export default function SettingsScreen({ theme }: SettingsScreenProps) {
   const router = useRouter();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-
-  const currentDate = new Date();
-  const dateString = currentDate.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
 
   const handleNotificationToggle = () => {
     setNotificationsEnabled(!notificationsEnabled);
@@ -44,7 +33,7 @@ export default function SettingsScreen({ toggleTheme, isDarkTheme }: SettingsScr
             // For example:
             // clearUserSession();
             // resetAppState();
-            router.replace('../screens/LoginScreen'); // Navigate to login screen
+            router.replace('/'); // Navigate to login screen
           }
         }
       ],
@@ -54,18 +43,6 @@ export default function SettingsScreen({ toggleTheme, isDarkTheme }: SettingsScr
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <StatusBar style={isDarkTheme ? 'light' : 'dark'} />
-      
-      <View style={styles.header}>
-        <Text style={[styles.dateText, { color: theme.colors.text }]}>{dateString}</Text>
-        <IconButton
-          icon={isDarkTheme ? 'weather-sunny' : 'weather-night'}
-          color={theme.colors.primary}
-          size={24}
-          onPress={toggleTheme}
-        />
-      </View>
-
       <View style={styles.content}>
         <Text style={[styles.title, { color: theme.colors.primary }]}>Settings</Text>
         
@@ -93,17 +70,6 @@ export default function SettingsScreen({ toggleTheme, isDarkTheme }: SettingsScr
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
-  dateText: {
-    fontSize: 16,
-    fontWeight: '500',
   },
   content: {
     flex: 1,

@@ -1,10 +1,14 @@
 // app/dashboard.tsx
 
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Image } from 'react-native';
-import { Text, Button, Card, Avatar } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { Text, Button, Card, Avatar, Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { Image } from 'expo-image';
+import { theme } from './theme';
+
+const { width, height } = Dimensions.get('window');
 
 const fetchUserData = async () => {
   // Simulating API call
@@ -47,56 +51,60 @@ export default function DashboardScreen() {
 
   if (!userData) {
     return (
-      <SafeAreaView style={styles.container}>
-        <Text>Loading...</Text>
-      </SafeAreaView>
+      <PaperProvider theme={theme}>
+        <SafeAreaView style={styles.container}>
+          <Text>Loading...</Text>
+        </SafeAreaView>
+      </PaperProvider>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Image
-          source={require('../assets/logo.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Text style={styles.welcomeText}>Welcome, {userData.name}!</Text>
-        <Avatar.Image size={300} source={{ uri: userData.photo }} style={styles.avatar} />
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text style={styles.dateText}>
-              {currentDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-            </Text>
-            <Text style={styles.timeText}>
-              {currentDate.toLocaleTimeString('en-US')}
-            </Text>
-            <Text style={styles.statusText}>Today Status: {userData.todayStatus}</Text>
-            <Text style={styles.locationText}>Working Location: {userData.workingLocation}</Text>
-          </Card.Content>
-        </Card>
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text style={styles.eventsTitle}>Upcoming Events:</Text>
-            {userData.events.map((event) => (
-              <Text key={event.id} style={styles.eventItem}>
-                • {event.title} at {event.time}
+    <PaperProvider theme={theme}>
+      <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <Image
+            source={require('../assets/logo.png')}
+            style={styles.logo}
+            contentFit="contain"
+          />
+          <Text style={styles.welcomeText}>Welcome, {userData.name}!</Text>
+          <Avatar.Image size={width * 0.4} source={{ uri: userData.photo }} style={styles.avatar} />
+          <Card style={styles.card}>
+            <Card.Content>
+              <Text style={styles.dateText}>
+                {currentDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </Text>
-            ))}
-          </Card.Content>
-        </Card>
-        <Button mode="contained" onPress={handleContinue} style={styles.button} color="#FF8C00">
-          Continue
-        </Button>
-      </ScrollView>
-    </SafeAreaView>
+              <Text style={styles.timeText}>
+                {currentDate.toLocaleTimeString('en-US')}
+              </Text>
+              <Text style={styles.statusText}>Today Status: {userData.todayStatus}</Text>
+              <Text style={styles.locationText}>Working Location: {userData.workingLocation}</Text>
+            </Card.Content>
+          </Card>
+          <Card style={styles.card}>
+            <Card.Content>
+              <Text style={styles.eventsTitle}>Upcoming Events:</Text>
+              {userData.events.map((event) => (
+                <Text key={event.id} style={styles.eventItem}>
+                  • {event.title} at {event.time}
+                </Text>
+              ))}
+            </Card.Content>
+          </Card>
+          <Button mode="contained" onPress={handleContinue} style={styles.button}>
+            Continue
+          </Button>
+        </ScrollView>
+      </SafeAreaView>
+    </PaperProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.background,
   },
   scrollContent: {
     flexGrow: 1,
@@ -104,8 +112,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 200,
-    height: 100,
+    width: width * 0.5,
+    height: height * 0.15,
     marginBottom: 20,
   },
   welcomeText: {
@@ -113,7 +121,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#006400', // Dark Green
+    color: theme.colors.primary,
   },
   avatar: {
     marginBottom: 20,
@@ -126,37 +134,38 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
-    color: '#01D613', // green
+    color: theme.colors.accent,
   },
   timeText: {
     fontSize: 16,
     marginBottom: 10,
-    color: '#FF8C00', // Orange
+    color: theme.colors.primary,
   },
   statusText: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
-    color: '#FF8C00', // Orange
+    color: theme.colors.primary,
   },
   locationText: {
     fontSize: 16,
     marginBottom: 5,
-    color: '#01D613', // green
+    color: theme.colors.accent,
   },
   eventsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#DE7EF3', // Dark Green
+    color: theme.colors.primary,
   },
   eventItem: {
     fontSize: 16,
     marginBottom: 5,
-    color: '#CECECE', // grey
+    color: theme.colors.text,
   },
   button: {
     marginTop: 20,
     width: '100%',
+    backgroundColor: theme.colors.accent,
   },
 });

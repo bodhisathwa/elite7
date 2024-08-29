@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, DataTable, useTheme } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
+import { Text, Card, DataTable } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-
-// Import your color theme
-import { colors } from '../constants/Colors';
+import { theme } from './theme';
 
 // Mock data for demonstration
 const mockData = [
@@ -27,12 +24,10 @@ export default function TodaySummaryScreen() {
   const [breakdownHours, setBreakdownHours] = useState<string[]>([]);
   const [checkRecords, setCheckRecords] = useState<CheckRecord[]>([]);
   
-  const theme = useTheme();
-  const router = useRouter();
+  const { width } = useWindowDimensions();
+  const isTablet = width > 768;
 
   useEffect(() => {
-    // In a real app, you would fetch this data from your backend
-    // For now, we'll use the mock data
     setCheckRecords(mockData);
     calculateHours(mockData);
   }, []);
@@ -45,7 +40,7 @@ export default function TodaySummaryScreen() {
       if (i + 1 < records.length) {
         const checkIn = new Date(`2023-01-01 ${records[i].time}`);
         const checkOut = new Date(`2023-01-01 ${records[i + 1].time}`);
-        const diff = (checkOut.getTime() - checkIn.getTime()) / 1000 / 60; // difference in minutes
+        const diff = (checkOut.getTime() - checkIn.getTime()) / 1000 / 60;
         totalMinutes += diff;
         breakdowns.push(`${records[i].location}: ${formatHours(diff)}`);
       }
@@ -62,37 +57,37 @@ export default function TodaySummaryScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Card style={styles.card}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <ScrollView contentContainerStyle={[styles.scrollContent, isTablet && styles.tabletContent]}>
+        <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
-            <Text style={[styles.title, { color: colors.primary }]}>Today's Summary</Text>
+            <Text style={[styles.title, { color: theme.colors.primary }]}>Today's Summary</Text>
             
             <View style={styles.summaryContainer}>
-              <Text style={[styles.label, { color: colors.text }]}>Total Hours Worked Today:</Text>
-              <Text style={[styles.value, { color: colors.accent }]}>{totalHours}</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Total Hours Worked Today:</Text>
+              <Text style={[styles.value, { color: theme.colors.accent }]}>{totalHours}</Text>
             </View>
 
             <View style={styles.breakdownContainer}>
-              <Text style={[styles.label, { color: colors.text }]}>Breakdown of Hours:</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Breakdown of Hours:</Text>
               {breakdownHours.map((breakdown, index) => (
-                <Text key={index} style={[styles.value, { color: colors.text }]}>{breakdown}</Text>
+                <Text key={index} style={[styles.value, { color: theme.colors.text }]}>{breakdown}</Text>
               ))}
             </View>
 
-            <Text style={[styles.label, { color: colors.text, marginTop: 20 }]}>Check-in/Check-out Records:</Text>
+            <Text style={[styles.label, { color: theme.colors.text, marginTop: 20 }]}>Check-in/Check-out Records:</Text>
             <DataTable>
               <DataTable.Header>
-                <DataTable.Title>Type</DataTable.Title>
-                <DataTable.Title>Time</DataTable.Title>
-                <DataTable.Title>Location</DataTable.Title>
+                <DataTable.Title textStyle={{ color: theme.colors.primary }}>Type</DataTable.Title>
+                <DataTable.Title textStyle={{ color: theme.colors.primary }}>Time</DataTable.Title>
+                <DataTable.Title textStyle={{ color: theme.colors.primary }}>Location</DataTable.Title>
               </DataTable.Header>
 
               {checkRecords.map((record) => (
                 <DataTable.Row key={record.id}>
-                  <DataTable.Cell>{record.type}</DataTable.Cell>
-                  <DataTable.Cell>{record.time}</DataTable.Cell>
-                  <DataTable.Cell>{record.location}</DataTable.Cell>
+                  <DataTable.Cell textStyle={{ color: theme.colors.text }}>{record.type}</DataTable.Cell>
+                  <DataTable.Cell textStyle={{ color: theme.colors.text }}>{record.time}</DataTable.Cell>
+                  <DataTable.Cell textStyle={{ color: theme.colors.text }}>{record.location}</DataTable.Cell>
                 </DataTable.Row>
               ))}
             </DataTable>
@@ -111,8 +106,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 20,
   },
+  tabletContent: {
+    paddingHorizontal: '10%',
+  },
   card: {
-    padding: 20,
+    borderRadius: 15,
+    elevation: 4,
   },
   title: {
     fontSize: 24,
